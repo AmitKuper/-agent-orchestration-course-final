@@ -1,4 +1,8 @@
-# Actor Development Plan — Cop/Thief Neural Actors and Model Bank
+# Plan — Actor System: Cop/Thief Neural Actors and Model Bank
+
+> **Document type:** Engineering / implementation plan  
+> **Scope:** How to build the Actor system, Model Bank, fallback actors, and neural training pipeline.  
+> **Related PRD:** `PRD_actor.md`
 
 ## 1. Purpose
 

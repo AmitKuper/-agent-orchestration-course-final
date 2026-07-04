@@ -3,7 +3,9 @@
 > This document defines the product requirements for the Actor system.
 > The Actor system is responsible for selecting legal game actions for Cop and Thief roles under the current game rules, observation model, and match configuration.
 >
-> This PRD is requirements-only. Implementation details such as training algorithms, model formats, storage technology, and serving architecture should be described in a separate implementation plan.
+> **Document type:** Product Requirements Document  
+> **Scope:** Requirements only — what the Actor system must support.  
+> **Related plan:** `plan_actor.md`
 
 ---
 
