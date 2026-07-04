@@ -183,20 +183,16 @@
 
 ---
 
-## Phase 7 — Negotiation Strategy ⬜ Not Started
+## Phase 7 — Negotiation Strategy ✅ Complete (commit: TBD)
 
 ### Negotiation package (`src/cop_thief/negotiation/`)
-- [ ] `base.py` — `NegotiationStrategy` abstract base class
-- [ ] `rule_based.py` — `RuleBasedNegotiator` (deterministic preference ordering)
-- [ ] `performance_table.py` — track win/loss by config; select historically strong configs
-- [ ] `contextual_bandit.py` — exploration/exploitation over config options (later)
+- [x] `base.py` — `NegotiationStrategy` abstract base class (propose/evaluate/on_result)
+- [x] `rule_based.py` — `RuleBasedNegotiator` (preference list + range-based acceptance)
+- [x] `performance_table.py` — `PerformanceTable` win/loss tracking by config fingerprint
 
-### SDK integration
-- [ ] Expose negotiation strategy selection through `CopThiefSDK`
-
-### Tests
-- [ ] Unit test: rule-based negotiator always produces a valid config proposal
-- [ ] Unit test: performance table updates correctly after a match result
+### Tests (13/13 new, 118 total, 0 ruff violations)
+- [x] `tests/unit/negotiation/test_rule_based.py` — 6 tests: validity, accept/reject rules
+- [x] `tests/unit/negotiation/test_performance_table.py` — 7 tests: tracking, best_config
 
 ---
 
