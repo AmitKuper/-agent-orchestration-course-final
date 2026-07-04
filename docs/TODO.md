@@ -1,91 +1,299 @@
 # TODO — Cop & Thief Project Progress
 
-## Milestone 1 — Backend skeleton ✅ Complete (commit: TBD)
+> Updated after every session. Completed items carry the commit hash.
+> Status key: ✅ Complete · 🚧 In Progress · ⬜ Not Started
 
-- [x] Create `src/cop_thief/` package with full directory structure
-- [x] `pyproject.toml` (uv, hatchling, ruff, pytest)
-- [x] `.env.example`, `.gitignore`
-- [x] `config/setup.json`, `config/rate_limits.json`, `config/game_defaults.json`
-- [x] `src/cop_thief/constants.py` — all magic strings/numbers
-- [x] `src/cop_thief/shared/version.py` — single version source
+---
+
+## Phase 1 — Foundation ✅ Complete (commit: bdb4001)
+
+### Project layout & tooling
+- [x] `src/cop_thief/` package with full directory structure
+- [x] `pyproject.toml` — uv, hatchling, ruff, pytest, all deps
+- [x] `uv.lock` committed alongside `pyproject.toml`
+- [x] `.env.example` — template for all required environment variables
+- [x] `.gitignore` — excludes `.env`, `*.db`, `.venv`, `node_modules`, model artifacts
+
+### Configuration files
+- [x] `config/setup.json` — app-level defaults (prefixes, pagination, timeouts)
+- [x] `config/rate_limits.json` — LLM and guest-MCP rate limits (read by Gatekeeper only)
+- [x] `config/game_defaults.json` — default game rules and board settings
+
+### Shared utilities
+- [x] `src/cop_thief/constants.py` — all magic strings and numeric literals
+- [x] `src/cop_thief/shared/version.py` — single version source (`0.1.0`)
 - [x] `src/cop_thief/shared/errors.py` — domain error hierarchy
-- [x] `src/cop_thief/shared/security.py` — password hashing + JWT
-- [x] `src/cop_thief/shared/gatekeeper.py` — LLM gatekeeper stub
-- [x] `src/cop_thief/sdk/sdk.py` — SDK entry point stub
-- [x] `src/cop_thief/db/base.py` — SQLAlchemy declarative base
-- [x] `src/cop_thief/db/session.py` — async engine + session factory
-- [x] `src/cop_thief/db/models/` — User, Match, SubGame, GameEvent
-- [x] `src/cop_thief/db/repositories.py` — MatchRepository, UserRepository
-- [x] `src/cop_thief/schemas/api.py` — Health, Auth, Pagination schemas
-- [x] `src/cop_thief/schemas/game.py` — Match, SubGame Pydantic schemas
-- [x] `src/cop_thief/webserver/config.py` — Settings (pydantic-settings)
-- [x] `src/cop_thief/webserver/main.py` — FastAPI app factory
-- [x] `src/cop_thief/api/deps.py` — shared FastAPI dependencies
-- [x] `src/cop_thief/api/routes_health.py` — GET /api/health
-- [x] `src/cop_thief/api/routes_auth.py` — login/logout/me stubs
-- [x] `src/cop_thief/api/routes_games.py` — public history endpoints
-- [x] `alembic/` — migration scaffolding
-- [x] `tests/unit/test_version.py` — version consistency checks
-- [x] `tests/integration/test_health.py` — health endpoint smoke test
+- [x] `src/cop_thief/shared/security.py` — bcrypt password hashing + JWT creation/verification
+- [x] `src/cop_thief/shared/gatekeeper.py` — LLM gatekeeper stub (full impl in Phase 6)
+
+### SDK entry point
+- [x] `src/cop_thief/sdk/sdk.py` — `CopThiefSDK` facade; all external callers go through here
+
+### Database layer
+- [x] `src/cop_thief/db/base.py` — SQLAlchemy `DeclarativeBase`
+- [x] `src/cop_thief/db/session.py` — async engine, session factory, `init_db()` for dev
+- [x] `src/cop_thief/db/models/user.py` — `User` ORM model
+- [x] `src/cop_thief/db/models/match.py` — `Match` ORM model
+- [x] `src/cop_thief/db/models/sub_game.py` — `SubGame` ORM model
+- [x] `src/cop_thief/db/models/game_event.py` — `GameEvent` ORM model (canonical replay log)
+- [x] `src/cop_thief/db/repositories.py` — `MatchRepository`, `UserRepository`
+
+### Pydantic schemas
+- [x] `src/cop_thief/schemas/api.py` — `HealthResponse`, `LoginRequest`, `TokenResponse`, `UserResponse`, `PaginatedResponse`
+- [x] `src/cop_thief/schemas/game.py` — `MatchSummary`, `MatchDetail`, `SubGameSummary`, enums
+
+### FastAPI application
+- [x] `src/cop_thief/webserver/config.py` — `Settings` loaded from env / `.env`
+- [x] `src/cop_thief/webserver/main.py` — FastAPI factory, CORS middleware, lifespan
+- [x] `src/cop_thief/api/deps.py` — shared FastAPI dependencies (`SessionDep`, `SettingsDep`)
+- [x] `src/cop_thief/api/routes_health.py` — `GET /api/health` (unauthenticated, live)
+- [x] `src/cop_thief/api/routes_auth.py` — login / logout / me stubs (full impl in Phase 4)
+- [x] `src/cop_thief/api/routes_games.py` — `GET /api/games`, `GET /api/games/{id}` (public)
+
+### Migrations
+- [x] `alembic.ini` + `alembic/env.py` + `alembic/script.py.mako` — Alembic scaffold
+
+### Tests (4/4 passing, 0 ruff violations)
+- [x] `tests/unit/test_version.py` — version consistency: `version.py` ↔ `pyproject.toml` ↔ `rate_limits.json`
+- [x] `tests/integration/test_health.py` — health endpoint returns `200 ok` with correct version
+
+### Documentation
+- [x] `docs/TODO.md` — this file
+- [x] `docs/cost.md` — token usage tracking
 
 ---
 
-## Milestone 2 — Game engine integration 🚧 Not started
+## Phase 2 — Game Engine ⬜ Not Started
 
-- [ ] Implement game engine (rules, movement, barriers, observation)
-- [ ] `src/cop_thief/game_engine/` package
-- [ ] Game orchestrator (`src/cop_thief/game/orchestrator.py`)
-- [ ] Player adapters (human, local bot, MCP)
-- [ ] Event persistence on every action
-- [ ] Replay data generation from events
-- [ ] Unit tests for engine rules
-- [ ] Integration test: full local game from start to finish
+### Core engine package (`src/cop_thief/game_engine/`)
+- [ ] `board.py` — grid, cop/thief positions, barrier placement logic
+- [ ] `rules.py` — legal move generation, capture detection, forfeit/timeout conditions
+- [ ] `observation.py` — partial-observation filtering per role (radius mask, hidden barriers)
+- [ ] `state.py` — immutable game state dataclass
+- [ ] `state_hash.py` — deterministic SHA-256 state hash for replay integrity
+- [ ] `replay.py` — frame builder from `GameEvent` sequence
 
----
+### Game orchestrator (`src/cop_thief/game/`)
+- [ ] `orchestrator.py` — create matches, manage sub-game loop, enforce turn order
+- [ ] `player_adapters.py` — `PlayerAdapter` base + `HumanPlayerAdapter`, `LocalBotPlayerAdapter`
+- [ ] `bot_strategy.py` — `RandomLegalActor` (first local bot)
+- [ ] `event_writer.py` — persist every action and state transition to `GameEvent`
+- [ ] `result_calculator.py` — compute `result_for_local_server` at match end
 
-## Milestone 3 — Public history and replay 🚧 Not started
+### SDK integration
+- [ ] Wire `CopThiefSDK.create_human_vs_server_game()` through orchestrator
+- [ ] Wire `CopThiefSDK.submit_human_action()` through orchestrator
 
-- [ ] History API with filters and pagination
-- [ ] Game detail and sub-game API
-- [ ] Replay frame API
-- [ ] Frontend scaffold (Next.js)
-- [ ] Board replay component
-
----
-
-## Milestone 4 — Authentication and human-vs-server 🚧 Not started
-
-- [ ] JWT middleware in `deps.py`
-- [ ] Login/logout fully implemented
-- [ ] Authenticated new game page
-- [ ] Live human game page
-- [ ] Action submission
-- [ ] Local bot adapter
-- [ ] WebSocket live updates (`/ws/games/{match_id}`)
+### Tests
+- [ ] Unit tests for legal move generation
+- [ ] Unit tests for capture and win-condition detection
+- [ ] Unit tests for observation filtering (must not leak hidden state)
+- [ ] Unit tests for state hash determinism
+- [ ] Integration test: full human-vs-bot match from start to finish
+- [ ] Integration test: event log reconstructs correct replay frames
 
 ---
 
-## Milestone 5 — MCP server endpoint 🚧 Not started
+## Phase 3 — Actor System ⬜ Not Started
 
-- [ ] `/mcp` endpoint with MCP tools
-- [ ] Guest MCP game initiation
-- [ ] MCP observation/action flow
-- [ ] Rate limiting for guest MCP
+### Actor package (`src/cop_thief/actors/`)
+- [ ] `base.py` — `Actor` abstract base class with `get_action(observation)` interface
+- [ ] `random_actor.py` — `RandomLegalActor` (selects uniform random legal move)
+- [ ] `heuristic_actor.py` — simple heuristic (cop pursues thief; thief flees)
+- [ ] `model_bank.py` — metadata registry for trained model artifacts
+- [ ] `model_actor.py` — `ModelActor` that loads a model from the bank and runs inference
+- [ ] `action_mask.py` — build binary action mask from legal moves for model input
+
+### Tests
+- [ ] Unit tests for `RandomLegalActor` (always returns a legal move)
+- [ ] Unit tests for action mask correctness
+- [ ] Integration test: orchestrator uses actor for bot turns
 
 ---
 
-## Milestone 6 — External MCP server games 🚧 Not started
+## Phase 4 — REST API & Web UI ⬜ Not Started
 
-- [ ] MCP client adapter
-- [ ] SSRF URL validation
-- [ ] Capability discovery
-- [ ] Propose/accept match flow
+### Authentication (complete the stubs from Phase 1)
+- [ ] JWT bearer middleware in `deps.py` — `CurrentUserDep`
+- [ ] `POST /api/auth/login` — verify password, return token (stub → real)
+- [ ] `POST /api/auth/logout` — token revocation list (optional)
+- [ ] `GET /api/me` — return authenticated user profile
+
+### Authenticated game endpoints
+- [ ] `POST /api/games/human-vs-server` — create match, return `public_id`
+- [ ] `POST /api/games/{id}/human-action` — submit move, return updated observation
+- [ ] `POST /api/games/{id}/cancel` — cancel own active match
+
+### Public game endpoints (expand stubs from Phase 1)
+- [ ] `GET /api/games` — pagination, sort, filter by status/mode/result
+- [ ] `GET /api/games/{id}` — match detail with sub-game list
+- [ ] `GET /api/games/{id}/subgames` — sub-game list
+- [ ] `GET /api/games/{id}/subgames/{sub_id}` — sub-game detail
+- [ ] `GET /api/games/{id}/subgames/{sub_id}/replay` — replay frames
+- [ ] `GET /api/games/{id}/events` — raw event log
+
+### WebSocket live updates
+- [ ] `WS /ws/games/{id}` — push `game.state_updated`, `subgame.completed`, `match.completed`
+- [ ] Reconnect handling: resend last known state on re-connect
+- [ ] Event bus / pub-sub wiring between orchestrator and WebSocket layer
+
+### Frontend (Next.js + React + TypeScript)
+- [ ] `frontend/` scaffold with Next.js, Tailwind CSS, shadcn/ui
+- [ ] `lib/apiClient.ts` — typed REST client
+- [ ] `lib/websocketClient.ts` — WebSocket wrapper with reconnect
+- [ ] Home page — server status, recent games, login/logout, start-game CTA
+- [ ] Login page
+- [ ] Public history page — table with pagination, sort, filter
+- [ ] Game detail page — metadata, participants, sub-game table, replay links
+- [ ] Replay page — board, cop/thief/barrier/crumbtrail, timeline, play/pause/step controls
+- [ ] New game page (authenticated) — mode selector, config, MCP URL field
+- [ ] Live human game page — board, action panel, move/barrier/forfeit controls, event log
+
+### Board components
+- [ ] `GameBoard.tsx` — SVG grid renderer
+- [ ] `Cell.tsx`, `Piece.tsx`, `Barrier.tsx`, `Crumbtrail.tsx`
+- [ ] `ReplayControls.tsx` — play/pause, step, speed, jump-to-start/end
+
+### Tests
+- [ ] API flow tests: login → start game → submit actions → complete match
+- [ ] Hidden-state leakage test: observer cannot see hidden positions through `/api`
+- [ ] Playwright E2E: history page loads as guest
+- [ ] Playwright E2E: replay can step forward/backward
+- [ ] Playwright E2E: authenticated user starts and plays a game
 
 ---
 
-## Milestone 7 — Hardening and polish 🚧 Not started
+## Phase 5 — MCP Inter-Group Play ⬜ Not Started
 
-- [ ] Responsive UI polish
-- [ ] Security hardening
-- [ ] Admin / technical-failure view
-- [ ] Load testing
+### MCP server (`src/cop_thief/mcp/`)
+- [ ] `server.py` — Streamable HTTP MCP server mounted at `/mcp`
+- [ ] `tools.py` — MCP tool definitions and handlers
+- [ ] `schemas.py` — MCP request/response Pydantic models
+- [ ] Tool: `list_supported_rules` — advertise rules version and capabilities
+- [ ] Tool: `start_game_vs_server` — guest MCP game initiation (rate-limited)
+- [ ] Tool: `propose_match` — receive server-vs-server match proposal
+- [ ] Tool: `accept_match` — accept an inbound proposal
+- [ ] Tool: `get_observation` — return caller-scoped observation only
+- [ ] Tool: `submit_action` — accept move/stay/barrier/forfeit from MCP client
+- [ ] Tool: `get_game_status` — current match/sub-game state
+- [ ] Tool: `get_game_history` — public history over MCP
+- [ ] Tool: `get_replay` — replay frames for completed match
+- [ ] Tool: `cancel_game` — cancel own active game
+
+### MCP client (`src/cop_thief/mcp/client.py`)
+- [ ] `RemoteMCPPlayerAdapter` — connects to external `/mcp` and drives the match
+- [ ] SSRF URL validation (block localhost, private ranges, metadata IPs)
+- [ ] DNS re-check after resolution before connecting
+- [ ] Outbound request timeout (from `config/setup.json`)
+
+### Guest rate limiting
+- [ ] Per-IP rate limiter for `start_game_vs_server`
+- [ ] Enforce max concurrent guest games per IP
+
+### Tests
+- [ ] Unit tests for MCP tool schemas
+- [ ] Integration test: guest MCP client completes a full game
+- [ ] Integration test: fake remote MCP server plays server-vs-server match
+- [ ] Security test: guest cannot trigger outbound connection via MCP
+
+---
+
+## Phase 6 — Built-In LLM Agent ⬜ Not Started
+
+### Agent package (`src/cop_thief/agents/`)
+- [ ] `communication_agent.py` — top-level agent orchestrating message flow
+- [ ] `message_generator.py` — convert actor decision → natural-language game message
+- [ ] `message_parser.py` — parse/summarise opponent natural-language messages
+- [ ] `mcp_tool_invoker.py` — call local or remote MCP tools
+- [ ] `hidden_state_filter.py` — strip any non-observation-safe data before LLM prompt
+- [ ] `prompts/game_turn_message.md` — prompt template for turn messages
+- [ ] `prompts/negotiation_message.md` — prompt template for pre-match negotiation
+
+### Gatekeeper (complete the stub from Phase 1)
+- [ ] `shared/gatekeeper.py` — implement rate limiting from `config/rate_limits.json`
+- [ ] Request queuing with asyncio queue
+- [ ] Exponential backoff retry on transient LLM errors
+- [ ] Per-call logging (model, tokens in/out, latency, success/failure)
+
+### Tests
+- [ ] Unit test: hidden-state filter strips disallowed fields
+- [ ] Unit test: gatekeeper enforces rate limit
+- [ ] Integration test: agent completes a server-vs-server turn end-to-end
+
+---
+
+## Phase 7 — Negotiation Strategy ⬜ Not Started
+
+### Negotiation package (`src/cop_thief/negotiation/`)
+- [ ] `base.py` — `NegotiationStrategy` abstract base class
+- [ ] `rule_based.py` — `RuleBasedNegotiator` (deterministic preference ordering)
+- [ ] `performance_table.py` — track win/loss by config; select historically strong configs
+- [ ] `contextual_bandit.py` — exploration/exploitation over config options (later)
+
+### SDK integration
+- [ ] Expose negotiation strategy selection through `CopThiefSDK`
+
+### Tests
+- [ ] Unit test: rule-based negotiator always produces a valid config proposal
+- [ ] Unit test: performance table updates correctly after a match result
+
+---
+
+## Phase 8 — Reports and Email ⬜ Not Started
+
+### Reports package (`src/cop_thief/reports/`)
+- [ ] `report_builder.py` — generate machine-readable JSON report from match data
+- [ ] `report_schema.py` — Pydantic schema for the report format
+
+### Email package (`src/cop_thief/email/`)
+- [ ] `email_sender.py` — send report over SMTP; disabled when `EMAIL_RECIPIENT` is empty
+- [ ] `email_templates/` — plain-text and HTML report email templates
+
+### REST API
+- [ ] `GET /api/games/{id}/report` — download JSON match report
+- [ ] `GET /api/games/{id}/report/email` — trigger report email (admin only)
+
+### Security checks
+- [ ] Scan all source files and config for hard-coded email addresses — must find zero
+- [ ] Confirm `EMAIL_RECIPIENT` comes from environment only
+
+### Tests
+- [ ] Unit test: report schema validates against a complete match fixture
+- [ ] Unit test: email sender is a no-op when `EMAIL_RECIPIENT` is empty
+- [ ] Integration test: report endpoint returns correct JSON for a completed match
+
+---
+
+## Phase 9 — Neural Actor Training ⬜ Not Started
+
+### RL environment (`src/cop_thief/actors/`)
+- [ ] `rl_env.py` — Gym-compatible wrapper around the game engine
+- [ ] `self_play_runner.py` — run self-play episodes and collect trajectories
+- [ ] `training_config.py` — hyperparameters loaded from config (no hard-coding)
+
+### Training scripts (`notebooks/` or `scripts/`)
+- [ ] `train_ppo.py` — offline PPO training loop
+- [ ] `evaluate.py` — head-to-head evaluation: trained model vs heuristic actor
+- [ ] `register_model.py` — register trained artifact in Model Bank with metadata
+
+### Model Bank
+- [ ] `model_bank.py` — metadata store: model id, version, win-rate, path
+- [ ] Model artifacts stored under `models/` (excluded from git via `.gitignore`)
+
+### Tests
+- [ ] Unit test: RL env step returns valid observation and non-negative reward
+- [ ] Integration test: one self-play episode completes without error
+
+---
+
+## Ongoing / Cross-Cutting
+
+- [ ] `docker-compose.yml` — services: backend, frontend, postgres, redis (optional)
+- [ ] `Dockerfile` for backend (FastAPI + uvicorn)
+- [ ] `Dockerfile` for frontend (Next.js)
+- [ ] Admin endpoints: `GET /api/admin/technical-failures`, `POST /api/admin/games/{id}/void`
+- [ ] Alembic initial migration (run after Phase 2 models are finalised)
+- [ ] CI workflow (GitHub Actions): ruff, pytest, build check
+- [ ] Live game publicly visible option (open product question from PRD)
+- [ ] Actor-perspective replay labelling in UI (open product question)
+- [ ] External MCP opponent allowlist (open engineering decision)
