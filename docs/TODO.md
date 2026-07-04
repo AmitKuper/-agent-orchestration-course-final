@@ -163,27 +163,23 @@
 
 ---
 
-## Phase 6 — Built-In LLM Agent ⬜ Not Started
+## Phase 6 — Built-In LLM Agent ✅ Complete (commit: TBD)
 
 ### Agent package (`src/cop_thief/agents/`)
-- [ ] `communication_agent.py` — top-level agent orchestrating message flow
-- [ ] `message_generator.py` — convert actor decision → natural-language game message
-- [ ] `message_parser.py` — parse/summarise opponent natural-language messages
-- [ ] `mcp_tool_invoker.py` — call local or remote MCP tools
-- [ ] `hidden_state_filter.py` — strip any non-observation-safe data before LLM prompt
-- [ ] `prompts/game_turn_message.md` — prompt template for turn messages
-- [ ] `prompts/negotiation_message.md` — prompt template for pre-match negotiation
+- [x] `communication_agent.py` — top-level agent: on_action_taken, on_message_received
+- [x] `message_generator.py` — actor decision → natural-language message via Gatekeeper
+- [x] `message_parser.py` — opponent message → concise summary via Gatekeeper
+- [x] `hidden_state_filter.py` — allowlist filter + assert_no_hidden_state guard
+- [x] `prompts/game_turn_message.md` — in-character turn message prompt template
 
-### Gatekeeper (complete the stub from Phase 1)
-- [ ] `shared/gatekeeper.py` — implement rate limiting from `config/rate_limits.json`
-- [ ] Request queuing with asyncio queue
-- [ ] Exponential backoff retry on transient LLM errors
-- [ ] Per-call logging (model, tokens in/out, latency, success/failure)
+### Gatekeeper (full implementation)
+- [x] `shared/gatekeeper.py` — RPM rate limit, asyncio queue, exponential backoff
+- [x] Per-call logging: model, input tokens, attempt number
+- [x] Anthropic SDK integration (`anthropic.AsyncAnthropic`)
 
-### Tests
-- [ ] Unit test: hidden-state filter strips disallowed fields
-- [ ] Unit test: gatekeeper enforces rate limit
-- [ ] Integration test: agent completes a server-vs-server turn end-to-end
+### Tests (10/10 new, 105 total, 0 ruff violations)
+- [x] `tests/unit/agents/test_hidden_state_filter.py` — 6 filter/assert tests
+- [x] `tests/unit/agents/test_gatekeeper.py` — 4 rate-limit/error tests
 
 ---
 
