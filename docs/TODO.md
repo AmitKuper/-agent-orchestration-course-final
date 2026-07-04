@@ -88,7 +88,7 @@
 
 ---
 
-## Phase 3 — Actor System ✅ Complete (commit: TBD)
+## Phase 3 — Actor System ✅ Complete (commit: see git log)
 
 ### Actor package (`src/cop_thief/actors/`)
 - [x] `base.py` — `Actor` abstract base class + `ALL_ACTION_TOKENS` vocabulary
@@ -106,7 +106,7 @@
 
 ---
 
-## Phase 4 — Game Loop & Authenticated API ✅ Complete (commit: TBD)
+## Phase 4 — Game Loop & Authenticated API ✅ Complete (commit: see git log)
 
 ### Game package (`src/cop_thief/game/`)
 - [x] `state_serializer.py` — `state_to_dict` / `state_from_dict` round-trip
@@ -143,7 +143,7 @@
 
 ---
 
-## Phase 5 — MCP Inter-Group Play ✅ Complete (commit: TBD)
+## Phase 5 — MCP Inter-Group Play ✅ Complete (commit: see git log)
 
 ### MCP server (`src/cop_thief/mcp/`)
 - [x] `server.py` — HTTP MCP server mounted at `/mcp` (GET info + POST dispatch)
@@ -163,7 +163,7 @@
 
 ---
 
-## Phase 6 — Built-In LLM Agent ✅ Complete (commit: TBD)
+## Phase 6 — Built-In LLM Agent ✅ Complete (commit: see git log)
 
 ### Agent package (`src/cop_thief/agents/`)
 - [x] `communication_agent.py` — top-level agent: on_action_taken, on_message_received
@@ -183,7 +183,7 @@
 
 ---
 
-## Phase 7 — Negotiation Strategy ✅ Complete (commit: TBD)
+## Phase 7 — Negotiation Strategy ✅ Complete (commit: see git log)
 
 ### Negotiation package (`src/cop_thief/negotiation/`)
 - [x] `base.py` — `NegotiationStrategy` abstract base class (propose/evaluate/on_result)
@@ -196,7 +196,7 @@
 
 ---
 
-## Phase 8 — Reports and Email ✅ Complete (commit: TBD)
+## Phase 8 — Reports and Email ✅ Complete (commit: see git log)
 
 ### Reports package (`src/cop_thief/reports/`)
 - [x] `report_schema.py` — `MatchReport` + `SubGameReport` Pydantic schemas
@@ -216,7 +216,7 @@
 
 ---
 
-## Phase 9 — Neural Actor Training ✅ Complete (commit: TBD)
+## Phase 9 — Neural Actor Training ✅ Complete (commit: see git log)
 
 ### RL environment (`src/cop_thief/actors/`)
 - [x] `rl_env.py` — `CopThiefEnv`: Gym-like reset/step with action masking
