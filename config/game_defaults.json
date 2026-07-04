@@ -1,0 +1,12 @@
+{
+  "rules_version": "1.0",
+  "grid_rows": 8,
+  "grid_cols": 8,
+  "max_barriers_per_cop": 5,
+  "max_thief_actions_per_sub_game": 30,
+  "num_sub_games": 2,
+  "crumbtrail_enabled": false,
+  "partial_observation_enabled": true,
+  "cop_observation_radius": null,
+  "thief_observation_radius": 3
+}

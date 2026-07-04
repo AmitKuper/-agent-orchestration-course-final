@@ -1,0 +1,17 @@
+{
+  "version": "0.1.0",
+  "app_name": "cop-thief-server",
+  "log_level": "INFO",
+  "api_prefix": "/api",
+  "ws_prefix": "/ws",
+  "mcp_prefix": "/mcp",
+  "default_page_size": 20,
+  "max_page_size": 100,
+  "cors_allowed_origins": ["http://localhost:3000"],
+  "guest_mcp_rate_limit_games_per_hour": 10,
+  "guest_mcp_max_concurrent_games": 2,
+  "external_mcp_connect_timeout_seconds": 10,
+  "external_mcp_request_timeout_seconds": 30,
+  "ssrf_block_private_ranges": true,
+  "replay_frames_cache_enabled": false
+}
