@@ -6,7 +6,8 @@ the route stubs and schemas so the API surface is stable from day one.
 
 from fastapi import APIRouter, HTTPException, status
 
-from cop_thief.api.deps import SessionDep, SettingsDep
+from cop_thief.api.deps import CurrentUserDep, SessionDep, SettingsDep
+from cop_thief.db.models.user import User
 from cop_thief.db.repositories import UserRepository
 from cop_thief.schemas.api import LoginRequest, TokenResponse, UserResponse
 from cop_thief.shared.security import create_access_token, verify_password
@@ -47,12 +48,6 @@ async def logout() -> None:
 
 
 @router.get("/me", response_model=UserResponse)
-async def get_me() -> UserResponse:
-    """Return the currently authenticated user's profile.
-
-    Token verification and user injection are added in Milestone 4.
-    """
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="Authentication middleware not yet implemented.",
-    )
+async def get_me(current_user: CurrentUserDep) -> User:
+    """Return the currently authenticated user's profile."""
+    return current_user

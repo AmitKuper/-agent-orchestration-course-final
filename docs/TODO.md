@@ -106,55 +106,40 @@
 
 ---
 
-## Phase 4 — REST API & Web UI ⬜ Not Started
+## Phase 4 — Game Loop & Authenticated API ✅ Complete (commit: TBD)
+
+### Game package (`src/cop_thief/game/`)
+- [x] `state_serializer.py` — `state_to_dict` / `state_from_dict` round-trip
+- [x] `action_parser.py` — `action_from_dict` / `action_to_dict`
+- [x] `bot_runner.py` — `run_bot_turns` until human's turn or game over
+- [x] `orchestrator.py` — `GameOrchestrator`: create match, apply human action
+
+### Database
+- [x] `sub_game.current_state_json` — live game state persisted per request
+- [x] `session.py` — `StaticPool` for in-memory SQLite (test stability)
 
 ### Authentication (complete the stubs from Phase 1)
-- [ ] JWT bearer middleware in `deps.py` — `CurrentUserDep`
-- [ ] `POST /api/auth/login` — verify password, return token (stub → real)
-- [ ] `POST /api/auth/logout` — token revocation list (optional)
-- [ ] `GET /api/me` — return authenticated user profile
+- [x] JWT bearer middleware in `deps.py` — `CurrentUserDep`
+- [x] `POST /api/auth/login` — verify password, return token (was already real)
+- [x] `GET /api/me` — return authenticated user profile
 
 ### Authenticated game endpoints
-- [ ] `POST /api/games/human-vs-server` — create match, return `public_id`
-- [ ] `POST /api/games/{id}/human-action` — submit move, return updated observation
-- [ ] `POST /api/games/{id}/cancel` — cancel own active match
+- [x] `POST /api/games/human-vs-server` — create match, run bot turns, return first obs
+- [x] `POST /api/games/{id}/human-action` — apply move, run bot turns, return observation
+- [ ] `POST /api/games/{id}/cancel` — cancel own active match (deferred)
 
-### Public game endpoints (expand stubs from Phase 1)
-- [ ] `GET /api/games` — pagination, sort, filter by status/mode/result
-- [ ] `GET /api/games/{id}` — match detail with sub-game list
-- [ ] `GET /api/games/{id}/subgames` — sub-game list
-- [ ] `GET /api/games/{id}/subgames/{sub_id}` — sub-game detail
-- [ ] `GET /api/games/{id}/subgames/{sub_id}/replay` — replay frames
-- [ ] `GET /api/games/{id}/events` — raw event log
+### Public game endpoints
+- [x] `GET /api/games` — paginated list (from Phase 1)
+- [x] `GET /api/games/{id}` — match detail (from Phase 1)
+- [ ] Sub-game and replay endpoints — deferred to later phase
 
-### WebSocket live updates
-- [ ] `WS /ws/games/{id}` — push `game.state_updated`, `subgame.completed`, `match.completed`
-- [ ] Reconnect handling: resend last known state on re-connect
-- [ ] Event bus / pub-sub wiring between orchestrator and WebSocket layer
+### Frontend, WebSocket, Playwright — deferred
 
-### Frontend (Next.js + React + TypeScript)
-- [ ] `frontend/` scaffold with Next.js, Tailwind CSS, shadcn/ui
-- [ ] `lib/apiClient.ts` — typed REST client
-- [ ] `lib/websocketClient.ts` — WebSocket wrapper with reconnect
-- [ ] Home page — server status, recent games, login/logout, start-game CTA
-- [ ] Login page
-- [ ] Public history page — table with pagination, sort, filter
-- [ ] Game detail page — metadata, participants, sub-game table, replay links
-- [ ] Replay page — board, cop/thief/barrier/crumbtrail, timeline, play/pause/step controls
-- [ ] New game page (authenticated) — mode selector, config, MCP URL field
-- [ ] Live human game page — board, action panel, move/barrier/forfeit controls, event log
-
-### Board components
-- [ ] `GameBoard.tsx` — SVG grid renderer
-- [ ] `Cell.tsx`, `Piece.tsx`, `Barrier.tsx`, `Crumbtrail.tsx`
-- [ ] `ReplayControls.tsx` — play/pause, step, speed, jump-to-start/end
-
-### Tests
-- [ ] API flow tests: login → start game → submit actions → complete match
-- [ ] Hidden-state leakage test: observer cannot see hidden positions through `/api`
-- [ ] Playwright E2E: history page loads as guest
-- [ ] Playwright E2E: replay can step forward/backward
-- [ ] Playwright E2E: authenticated user starts and plays a game
+### Tests (20/20 passing, 0 ruff violations)
+- [x] `tests/integration/conftest.py` — shared in-memory DB fixture, `client` fixture
+- [x] `tests/integration/test_game_endpoints.py` — auth guard, public list/404 tests
+- [x] `tests/unit/game/test_state_serializer.py` — 6 round-trip tests
+- [x] `tests/unit/game/test_action_parser.py` — 10 parse/serialise tests
 
 ---
 

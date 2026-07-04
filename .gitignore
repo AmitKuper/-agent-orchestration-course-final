@@ -52,5 +52,5 @@ Thumbs.db
 # Docker volumes
 postgres-data/
 
-# Model artifacts
-models/
+# Model artifacts (ML weights — root-level only, not src/cop_thief/db/models/)
+/models/

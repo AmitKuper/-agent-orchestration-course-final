@@ -8,26 +8,34 @@ Production uses Alembic migrations instead.
 from collections.abc import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import StaticPool
 
-_engine = None
-_session_factory: async_sessionmaker | None = None
+_engines: dict[str, object] = {}
+_factories: dict[str, async_sessionmaker] = {}
 
 
 def _get_engine(database_url: str):
-    """Return (and cache) the async engine for *database_url*."""
-    global _engine
-    if _engine is None:
-        _engine = create_async_engine(database_url, echo=False)
-    return _engine
+    """Return (and cache) the async engine for *database_url*.
+
+    In-memory SQLite URLs use ``StaticPool`` so all connections share
+    the same underlying connection (required for ``:memory:`` databases).
+    """
+    if database_url not in _engines:
+        is_memory = ":memory:" in database_url
+        kwargs: dict = {"echo": False}
+        if is_memory:
+            kwargs["connect_args"] = {"check_same_thread": False}
+            kwargs["poolclass"] = StaticPool
+        _engines[database_url] = create_async_engine(database_url, **kwargs)
+    return _engines[database_url]
 
 
 def _get_factory(database_url: str) -> async_sessionmaker:
-    """Return (and cache) the session factory."""
-    global _session_factory
-    if _session_factory is None:
+    """Return (and cache) the session factory for *database_url*."""
+    if database_url not in _factories:
         engine = _get_engine(database_url)
-        _session_factory = async_sessionmaker(engine, expire_on_commit=False)
-    return _session_factory
+        _factories[database_url] = async_sessionmaker(engine, expire_on_commit=False)
+    return _factories[database_url]
 
 
 async def get_session(database_url: str) -> AsyncGenerator[AsyncSession, None]:
@@ -44,7 +52,7 @@ async def init_db(database_url: str) -> None:
     Production deployments run Alembic migrations instead.
     """
     import cop_thief.db.models  # noqa: F401 — registers all models
-    from cop_thief.db.base import Base
+    from cop_thief.db.base import Base  # noqa: PLC0415
 
     engine = _get_engine(database_url)
     async with engine.begin() as conn:
