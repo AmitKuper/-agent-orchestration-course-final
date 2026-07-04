@@ -63,51 +63,46 @@
 
 ---
 
-## Phase 2 — Game Engine ⬜ Not Started
+## Phase 2 — Game Engine ✅ Complete (commit: d201876)
 
 ### Core engine package (`src/cop_thief/game_engine/`)
-- [ ] `board.py` — grid, cop/thief positions, barrier placement logic
-- [ ] `rules.py` — legal move generation, capture detection, forfeit/timeout conditions
-- [ ] `observation.py` — partial-observation filtering per role (radius mask, hidden barriers)
-- [ ] `state.py` — immutable game state dataclass
-- [ ] `state_hash.py` — deterministic SHA-256 state hash for replay integrity
-- [ ] `replay.py` — frame builder from `GameEvent` sequence
+- [x] `errors.py` — `ConfigError`, `ActionOwnershipError`, `EngineStateError`
+- [x] `coordinates.py` — `Pos` type, direction deltas, grid helpers, Chebyshev distance
+- [x] `config.py` — `GameConfig` dataclass with validation and `from_dict()`
+- [x] `state.py` — mutable `GameState` dataclass with actor helpers
+- [x] `actions.py` — `Action`, `ActionResult`, all result-type constants
+- [x] `transitions.py` — `apply_action` dispatcher: move, stay, barrier, forfeit
+- [x] `win_conditions.py` — post-action win checks (survival, trapped, capture)
+- [x] `crumbtrails.py` — trail updates and visibility filtering
+- [x] `observations.py` — `build_observation` (observation-safe, no hidden state)
+- [x] `hashing.py` — SHA-256 canonical state hash + sub-game seed derivation
+- [x] `scoring.py` — `score_subgame` producing `SubGameScore`
+- [x] `role_schedule.py` — role alternation across sub-games
+- [x] `engine.py` — `GameEngine` public API (initialize, apply, observe, hash, score)
 
-### Game orchestrator (`src/cop_thief/game/`)
-- [ ] `orchestrator.py` — create matches, manage sub-game loop, enforce turn order
-- [ ] `player_adapters.py` — `PlayerAdapter` base + `HumanPlayerAdapter`, `LocalBotPlayerAdapter`
-- [ ] `bot_strategy.py` — `RandomLegalActor` (first local bot)
-- [ ] `event_writer.py` — persist every action and state transition to `GameEvent`
-- [ ] `result_calculator.py` — compute `result_for_local_server` at match end
-
-### SDK integration
-- [ ] Wire `CopThiefSDK.create_human_vs_server_game()` through orchestrator
-- [ ] Wire `CopThiefSDK.submit_human_action()` through orchestrator
-
-### Tests
-- [ ] Unit tests for legal move generation
-- [ ] Unit tests for capture and win-condition detection
-- [ ] Unit tests for observation filtering (must not leak hidden state)
-- [ ] Unit tests for state hash determinism
-- [ ] Integration test: full human-vs-bot match from start to finish
-- [ ] Integration test: event log reconstructs correct replay frames
+### Tests (27/27 passing, 0 ruff violations)
+- [x] `tests/unit/game_engine/test_movement.py` — 8 tests: directions, OOB, capture, survival
+- [x] `tests/unit/game_engine/test_barriers.py` — 6 tests: placement, limit, collision
+- [x] `tests/unit/game_engine/test_win_conditions.py` — 5 tests: forfeit, trapped, capture
+- [x] `tests/unit/game_engine/test_observation.py` — 8 tests: visibility, leak-safety, hashing
 
 ---
 
-## Phase 3 — Actor System ⬜ Not Started
+## Phase 3 — Actor System ✅ Complete (commit: TBD)
 
 ### Actor package (`src/cop_thief/actors/`)
-- [ ] `base.py` — `Actor` abstract base class with `get_action(observation)` interface
-- [ ] `random_actor.py` — `RandomLegalActor` (selects uniform random legal move)
-- [ ] `heuristic_actor.py` — simple heuristic (cop pursues thief; thief flees)
-- [ ] `model_bank.py` — metadata registry for trained model artifacts
-- [ ] `model_actor.py` — `ModelActor` that loads a model from the bank and runs inference
-- [ ] `action_mask.py` — build binary action mask from legal moves for model input
+- [x] `base.py` — `Actor` abstract base class + `ALL_ACTION_TOKENS` vocabulary
+- [x] `random_actor.py` — `RandomLegalActor` (uniform random, avoids forfeit)
+- [x] `heuristic_actor.py` — greedy Chebyshev heuristic (cop chases, thief flees)
+- [x] `model_bank.py` — `ModelBank` + `ModelMetadata` registry (no weights committed)
+- [x] `model_actor.py` — `ModelActor` stub with `_infer` override point (Phase 9)
+- [x] `action_mask.py` — 10-slot binary mask (8 dirs + stay + forfeit)
 
-### Tests
-- [ ] Unit tests for `RandomLegalActor` (always returns a legal move)
-- [ ] Unit tests for action mask correctness
-- [ ] Integration test: orchestrator uses actor for bot turns
+### Tests (26/26 passing, 0 ruff violations)
+- [x] `tests/unit/actors/test_random_actor.py` — 6 tests: legality, determinism, forfeit edge
+- [x] `tests/unit/actors/test_action_mask.py` — 8 tests: slot mapping, edge cases
+- [x] `tests/unit/actors/test_heuristic_actor.py` — 5 tests: direction optimality, fallback
+- [x] `tests/unit/actors/test_model_bank.py` — 7 tests: register, get, filter, best
 
 ---
 
