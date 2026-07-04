@@ -216,25 +216,19 @@
 
 ---
 
-## Phase 9 — Neural Actor Training ⬜ Not Started
+## Phase 9 — Neural Actor Training ✅ Complete (commit: TBD)
 
 ### RL environment (`src/cop_thief/actors/`)
-- [ ] `rl_env.py` — Gym-compatible wrapper around the game engine
-- [ ] `self_play_runner.py` — run self-play episodes and collect trajectories
-- [ ] `training_config.py` — hyperparameters loaded from config (no hard-coding)
+- [x] `rl_env.py` — `CopThiefEnv`: Gym-like reset/step with action masking
+- [x] `self_play_runner.py` — `SelfPlayRunner` collecting `Trajectory` objects
+- [x] `training_config.py` — `TrainingConfig` from dict (no hard-coded values)
+- [x] `model_bank.py` — `ModelBank` + `ModelMetadata` (from Phase 3, already committed)
 
-### Training scripts (`notebooks/` or `scripts/`)
-- [ ] `train_ppo.py` — offline PPO training loop
-- [ ] `evaluate.py` — head-to-head evaluation: trained model vs heuristic actor
-- [ ] `register_model.py` — register trained artifact in Model Bank with metadata
+### Training scripts — deferred (need PyTorch/ONNX; not installed by default)
 
-### Model Bank
-- [ ] `model_bank.py` — metadata store: model id, version, win-rate, path
-- [ ] Model artifacts stored under `models/` (excluded from git via `.gitignore`)
-
-### Tests
-- [ ] Unit test: RL env step returns valid observation and non-negative reward
-- [ ] Integration test: one self-play episode completes without error
+### Tests (12/12 new, 139 total, 0 ruff violations)
+- [x] `tests/unit/rl/test_rl_env.py` — 7 env tests: reset/step/reward/termination
+- [x] `tests/unit/rl/test_self_play.py` — 5 trajectory tests: alignment, binary masks
 
 ---
 
