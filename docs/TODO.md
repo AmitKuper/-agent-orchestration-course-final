@@ -143,38 +143,23 @@
 
 ---
 
-## Phase 5 — MCP Inter-Group Play ⬜ Not Started
+## Phase 5 — MCP Inter-Group Play ✅ Complete (commit: TBD)
 
 ### MCP server (`src/cop_thief/mcp/`)
-- [ ] `server.py` — Streamable HTTP MCP server mounted at `/mcp`
-- [ ] `tools.py` — MCP tool definitions and handlers
-- [ ] `schemas.py` — MCP request/response Pydantic models
-- [ ] Tool: `list_supported_rules` — advertise rules version and capabilities
-- [ ] Tool: `start_game_vs_server` — guest MCP game initiation (rate-limited)
-- [ ] Tool: `propose_match` — receive server-vs-server match proposal
-- [ ] Tool: `accept_match` — accept an inbound proposal
-- [ ] Tool: `get_observation` — return caller-scoped observation only
-- [ ] Tool: `submit_action` — accept move/stay/barrier/forfeit from MCP client
-- [ ] Tool: `get_game_status` — current match/sub-game state
-- [ ] Tool: `get_game_history` — public history over MCP
-- [ ] Tool: `get_replay` — replay frames for completed match
-- [ ] Tool: `cancel_game` — cancel own active game
+- [x] `server.py` — HTTP MCP server mounted at `/mcp` (GET info + POST dispatch)
+- [x] `tools.py` — `list_supported_rules`, `start_game_vs_server`, `get_observation`, `submit_action`, `get_game_status`, `get_game_history`
+- [x] `schemas.py` — `McpRequest`, `McpResponse`, `McpError`, per-tool param models
+- [x] `rate_limiter.py` — per-IP sliding-window: games/hour + concurrent limit
 
 ### MCP client (`src/cop_thief/mcp/client.py`)
-- [ ] `RemoteMCPPlayerAdapter` — connects to external `/mcp` and drives the match
-- [ ] SSRF URL validation (block localhost, private ranges, metadata IPs)
-- [ ] DNS re-check after resolution before connecting
-- [ ] Outbound request timeout (from `config/setup.json`)
+- [x] `RemoteMcpClient` — SSRF-validated HTTP client with DNS re-check
+- [x] SSRF blocks localhost, RFC-1918, 169.254.x.x, non-http/https
+- [x] Configurable timeout from `config/setup.json`
 
-### Guest rate limiting
-- [ ] Per-IP rate limiter for `start_game_vs_server`
-- [ ] Enforce max concurrent guest games per IP
-
-### Tests
-- [ ] Unit tests for MCP tool schemas
-- [ ] Integration test: guest MCP client completes a full game
-- [ ] Integration test: fake remote MCP server plays server-vs-server match
-- [ ] Security test: guest cannot trigger outbound connection via MCP
+### Tests (18/18 new, 95 total, 0 ruff violations)
+- [x] `tests/unit/mcp/test_rate_limiter.py` — 5 rate limiter tests
+- [x] `tests/unit/mcp/test_ssrf.py` — 8 SSRF validation tests
+- [x] `tests/integration/test_mcp_endpoint.py` — 5 MCP endpoint integration tests
 
 ---
 

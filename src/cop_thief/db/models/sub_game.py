@@ -1,8 +1,10 @@
 """ORM model for a single sub-game within a match."""
 
 from datetime import datetime
-from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String
+
+from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from cop_thief.db.base import Base
 
 
