@@ -126,14 +126,16 @@
 ### Authenticated game endpoints
 - [x] `POST /api/games/human-vs-server` — create match, run bot turns, return first obs
 - [x] `POST /api/games/{id}/human-action` — apply move, run bot turns, return observation
-- [ ] `POST /api/games/{id}/cancel` — cancel own active match (deferred)
+- [x] `POST /api/games/{id}/cancel` — cancel own active match
 
 ### Public game endpoints
-- [x] `GET /api/games` — paginated list (from Phase 1)
-- [x] `GET /api/games/{id}` — match detail (from Phase 1)
-- [ ] Sub-game and replay endpoints — deferred to later phase
+- [x] `GET /api/games` — paginated list; supports `?public_only=true`
+- [x] `GET /api/games/{id}` — match detail
+- [x] `GET /api/games/{id}/subgames/{index}` — sub-game with full replay event log
 
-### Frontend, WebSocket, Playwright — deferred
+### Frontend & WebSocket
+- [x] HTML/JS SPA at `/app/*` — game history, match detail, replay
+- [x] `WS /ws/games/{id}` — live state-update push; match.html subscribes automatically
 
 ### Tests (20/20 passing, 0 ruff violations)
 - [x] `tests/integration/conftest.py` — shared in-memory DB fixture, `client` fixture
@@ -232,14 +234,13 @@
 
 ---
 
-## Ongoing / Cross-Cutting
+## Ongoing / Cross-Cutting ✅ Complete
 
-- [ ] `docker-compose.yml` — services: backend, frontend, postgres, redis (optional)
-- [ ] `Dockerfile` for backend (FastAPI + uvicorn)
-- [ ] `Dockerfile` for frontend (Next.js)
-- [ ] Admin endpoints: `GET /api/admin/technical-failures`, `POST /api/admin/games/{id}/void`
-- [ ] Alembic initial migration (run after Phase 2 models are finalised)
-- [ ] CI workflow (GitHub Actions): ruff, pytest, build check
-- [ ] Live game publicly visible option (open product question from PRD)
-- [ ] Actor-perspective replay labelling in UI (open product question)
-- [ ] External MCP opponent allowlist (open engineering decision)
+- [x] `docker-compose.yml` — backend service with volume-mounted SQLite + health check
+- [x] `Dockerfile` for backend (python:3.12-slim, uv, uvicorn)
+- [x] Admin endpoints: `GET /api/admin/technical-failures`, `POST /api/admin/games/{id}/void`
+- [x] Alembic initial migration — `alembic/versions/91838bac70a5_initial.py`
+- [x] CI workflow (GitHub Actions) — `.github/workflows/ci.yml`: ruff, pytest, build check
+- [x] Live game publicly visible option — `Match.is_public` flag + `?public_only` query param
+- [x] Actor-perspective replay labelling in UI — replay.html colour-codes events by actor_role
+- [x] External MCP opponent allowlist — `config/mcp_allowlist.json` + `mcp/allowlist.py`
