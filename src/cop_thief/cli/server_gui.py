@@ -30,6 +30,7 @@ class ServerGui:
         """Build the UI and start the auto-refresh loop."""
         self._root = root
         self._manager = manager
+        self._after_id: str | None = None
         root.title("Cop-Thief Server Control")
         root.resizable(False, False)
         self._build_ui()
@@ -118,18 +119,36 @@ class ServerGui:
     # ------------------------------------------------------------------
 
     def _refresh(self) -> None:
-        """Reload server list from manager and reschedule next refresh."""
+        """Reload server list from manager and reschedule next refresh.
+
+        Cancels any pending timer first so manual and auto refreshes don't stack.
+        """
+        if self._after_id is not None:
+            self._root.after_cancel(self._after_id)
         self._populate(self._manager.list_servers())
-        self._root.after(_REFRESH_MS, self._refresh)
+        self._after_id = self._root.after(_REFRESH_MS, self._refresh)
 
     def _populate(self, entries: list[ServerEntry]) -> None:
-        """Rebuild the treeview rows from *entries*."""
+        """Rebuild the treeview rows, preserving the current port selection."""
+        # Remember which port is selected before clearing rows.
+        selected_port: int | None = None
+        sel = self._tree.selection()
+        if sel:
+            try:
+                selected_port = int(self._tree.item(sel[0])["values"][0])
+            except (IndexError, ValueError):
+                pass
+
         self._tree.delete(*self._tree.get_children())
         for e in entries:
             tag = "running" if e.status == "running" else "crashed"
-            self._tree.insert(
+            iid = self._tree.insert(
                 "", "end", values=(e.port, e.pid, e.status, e.started_at), tags=(tag,),
             )
+            # Restore selection if this row matches the previously selected port.
+            if e.port == selected_port:
+                self._tree.selection_set(iid)
+                self._tree.focus(iid)
 
     def _set_status(self, message: str) -> None:
         """Update the status bar text."""
