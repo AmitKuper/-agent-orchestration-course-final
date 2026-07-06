@@ -48,6 +48,7 @@ class MatchSummary(BaseModel):
     local_score: int
     opponent_score: int
     valid_subgame_count: int
+    is_public: bool = True
 
     model_config = {"from_attributes": True}
 
@@ -67,6 +68,34 @@ class SubGameSummary(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class GameEventSchema(BaseModel):
+    """Public representation of a single replay event."""
+
+    id: int
+    turn_index: int
+    actor_role: str
+    actor_side: str
+    action_json: dict
+    result: str
+    state_hash: str
+    message_text: str | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class SubGameDetail(SubGameSummary):
+    """Sub-game with full event log for replay."""
+
+    started_at: datetime | None
+    ended_at: datetime | None
+    thief_actions: int
+    barriers_used: int
+    initial_state_json: dict | None
+    final_state_json: dict | None
+    events: list[GameEventSchema] = []
+
+
 class MatchDetail(MatchSummary):
     """Full match record including sub-game list."""
 
@@ -74,4 +103,5 @@ class MatchDetail(MatchSummary):
     ended_at: datetime | None
     rules_version: str
     config_json: dict
+    is_public: bool
     sub_games: list[SubGameSummary] = []

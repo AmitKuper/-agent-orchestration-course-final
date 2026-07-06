@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from cop_thief.constants import STATUS_LIVE
@@ -32,6 +32,7 @@ class Match(Base):
     opponent_score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     result_for_local_server: Mapped[str | None] = mapped_column(String(16), nullable=True)
     valid_subgame_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    is_public: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     sub_games: Mapped[list["SubGame"]] = relationship(  # noqa: F821
         back_populates="match", cascade="all, delete-orphan"
