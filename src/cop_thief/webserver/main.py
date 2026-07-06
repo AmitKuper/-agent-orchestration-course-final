@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from cop_thief.api.routes_auth import router as auth_router
 from cop_thief.api.routes_games import router as games_router
 from cop_thief.api.routes_health import router as health_router
+from cop_thief.api.routes_server import router as server_router
 from cop_thief.constants import API_PREFIX, APP_NAME, MCP_PREFIX
 from cop_thief.db.session import init_db
 from cop_thief.mcp.server import router as mcp_router
@@ -52,6 +53,7 @@ def create_app() -> FastAPI:
     app.include_router(auth_router, prefix=API_PREFIX, tags=["auth"])
     app.include_router(games_router, prefix=API_PREFIX, tags=["games"])
     app.include_router(mcp_router, prefix=MCP_PREFIX, tags=["mcp"])
+    app.include_router(server_router, prefix=API_PREFIX, tags=["servers"])
     return app
 
 
