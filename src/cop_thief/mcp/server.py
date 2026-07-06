@@ -8,6 +8,7 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 
 from cop_thief.api.deps import SessionDep
+from cop_thief.mcp.allowlist import is_origin_allowed
 from cop_thief.mcp.schemas import McpError, McpRequest, McpResponse
 from cop_thief.mcp.tools import (
     handle_get_game_status,
@@ -52,6 +53,9 @@ async def mcp_dispatch(request: Request, body: McpRequest, session: SessionDep) 
     params = body.params
     req_id = body.id
     client_ip = request.client.host if request.client else "unknown"
+    origin = request.headers.get("origin", request.headers.get("host", client_ip))
+    if not is_origin_allowed(origin):
+        return _error(req_id, -32000, f"Origin {origin!r} is not on the MCP allowlist.")
 
     if method not in {*_SESSION_ONLY, "start_game_vs_server"}:
         return _error(req_id, -32601, f"Method not found: {method!r}")

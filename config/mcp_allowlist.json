@@ -1,0 +1,5 @@
+{
+  "_comment": "External MCP opponent allowlist. Set mode to 'restricted' to enforce allowed_origins.",
+  "mode": "open",
+  "allowed_origins": []
+}
