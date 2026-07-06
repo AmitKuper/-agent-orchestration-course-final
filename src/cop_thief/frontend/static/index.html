@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cop & Thief — Game History</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background: #f5f5f5; }
+  h1 { color: #1a237e; }
+  nav a { margin-right: 1rem; color: #1565c0; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+  th { background: #1a237e; color: white; padding: .6rem 1rem; text-align: left; font-size: .85rem; }
+  td { padding: .55rem 1rem; border-bottom: 1px solid #e0e0e0; font-size: .9rem; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #e8eaf6; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: .78rem; font-weight: 600; }
+  .live    { background: #e8f5e9; color: #2e7d32; }
+  .completed { background: #e3f2fd; color: #1565c0; }
+  .cancelled { background: #fce4ec; color: #c62828; }
+  .technical_invalid { background: #fff3e0; color: #e65100; }
+  .aborted { background: #f3e5f5; color: #6a1b9a; }
+  .controls { display: flex; gap: .5rem; margin-bottom: 1rem; align-items: center; }
+  .controls label { font-size: .85rem; }
+  button { padding: .4rem .9rem; border: none; border-radius: 4px; background: #1565c0; color: white; cursor: pointer; font-size: .85rem; }
+  button:hover { background: #0d47a1; }
+  #msg { color: #555; margin-bottom: .5rem; font-size: .85rem; }
+  a.row-link { color: #1565c0; text-decoration: none; font-weight: 500; }
+  a.row-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<h1>Cop &amp; Thief</h1>
+<nav>
+  <a href="/">Game History</a>
+</nav>
+<hr>
+<div class="controls">
+  <label><input type="checkbox" id="publicOnly"> Public matches only</label>
+  <button onclick="load()">Refresh</button>
+</div>
+<div id="msg">Loading…</div>
+<table>
+  <thead><tr>
+    <th>Match ID</th><th>Mode</th><th>Status</th>
+    <th>Local&nbsp;Score</th><th>Opponent&nbsp;Score</th><th>Sub-games</th><th>Created</th>
+  </tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+<script>
+async function load() {
+  const pub = document.getElementById('publicOnly').checked;
+  const msg = document.getElementById('msg');
+  msg.textContent = 'Loading…';
+  try {
+    const r = await fetch(`/api/games?limit=50${pub ? '&public_only=true' : ''}`);
+    const data = await r.json();
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+    if (!data.items.length) { msg.textContent = 'No matches found.'; return; }
+    msg.textContent = `${data.items.length} match(es) found.`;
+    for (const m of data.items) {
+      const tr = document.createElement('tr');
+      const dt = new Date(m.created_at).toLocaleString();
+      tr.innerHTML = `
+        <td><a class="row-link" href="/app/match.html?id=${m.public_id}">${m.public_id.slice(0,8)}…</a></td>
+        <td>${m.mode}</td>
+        <td><span class="badge ${m.status}">${m.status}</span></td>
+        <td>${m.local_score}</td>
+        <td>${m.opponent_score}</td>
+        <td>${m.valid_subgame_count}</td>
+        <td>${dt}</td>`;
+      tbody.appendChild(tr);
+    }
+  } catch(e) { msg.textContent = 'Error loading matches: ' + e.message; }
+}
+load();
+document.getElementById('publicOnly').addEventListener('change', load);
+</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Match Detail — Cop &amp; Thief</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; background: #f5f5f5; }
+  h1,h2 { color: #1a237e; }
+  nav a { margin-right: 1rem; color: #1565c0; text-decoration: none; }
+  nav a:hover { text-decoration: underline; }
+  .card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.15); padding: 1rem 1.5rem; margin-bottom: 1rem; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: .78rem; font-weight: 600; }
+  .live{background:#e8f5e9;color:#2e7d32}.completed{background:#e3f2fd;color:#1565c0}
+  .cancelled{background:#fce4ec;color:#c62828}.technical_invalid{background:#fff3e0;color:#e65100}
+  .aborted{background:#f3e5f5;color:#6a1b9a}
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: .25rem .75rem; font-size: .9rem; }
+  dt { font-weight: 600; color: #555; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: #1a237e; color: white; padding: .5rem 1rem; text-align: left; font-size: .82rem; }
+  td { padding: .45rem 1rem; border-bottom: 1px solid #e0e0e0; font-size: .88rem; }
+  tr:hover td { background: #e8eaf6; }
+  button { padding: .4rem .9rem; border: none; border-radius: 4px; background: #1565c0; color: white; cursor: pointer; font-size: .85rem; }
+  button:hover { background: #0d47a1; }
+  #ws-status { font-size: .8rem; color: #888; margin-bottom: .5rem; }
+</style>
+</head>
+<body>
+<h1>Match Detail</h1>
+<nav><a href="/">← Back to history</a></nav>
+<hr>
+<div id="ws-status">WebSocket: disconnected</div>
+<div id="meta" class="card">Loading…</div>
+<h2>Sub-games</h2>
+<div class="card">
+  <table>
+    <thead><tr><th>#</th><th>Status</th><th>Local role</th><th>Winner side</th><th>Win reason</th><th>Turns</th><th>Replay</th></tr></thead>
+    <tbody id="sgbody"></tbody>
+  </table>
+</div>
+<script>
+const params = new URLSearchParams(location.search);
+const matchId = params.get('id');
+
+async function loadMatch() {
+  const r = await fetch(`/api/games/${matchId}`);
+  if (!r.ok) { document.getElementById('meta').textContent = 'Match not found.'; return; }
+  const m = await r.json();
+  document.title = `Match ${matchId.slice(0,8)} — Cop & Thief`;
+  document.getElementById('meta').innerHTML = `
+    <dl>
+      <dt>Match ID</dt><dd>${m.public_id}</dd>
+      <dt>Mode</dt><dd>${m.mode}</dd>
+      <dt>Status</dt><dd><span class="badge ${m.status}">${m.status}</span></dd>
+      <dt>Local server</dt><dd>${m.local_server_name}</dd>
+      <dt>Opponent</dt><dd>${m.opponent_name}</dd>
+      <dt>Score</dt><dd>${m.local_score} – ${m.opponent_score}</dd>
+      <dt>Result</dt><dd>${m.result_for_local_server ?? '—'}</dd>
+      <dt>Public</dt><dd>${m.is_public ? 'Yes' : 'No'}</dd>
+      <dt>Created</dt><dd>${new Date(m.created_at).toLocaleString()}</dd>
+    </dl>`;
+  const tbody = document.getElementById('sgbody');
+  tbody.innerHTML = '';
+  for (const sg of (m.sub_games ?? [])) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${sg.index}</td>
+      <td>${sg.status}</td>
+      <td>${sg.local_role}</td>
+      <td>${sg.winner_side ?? '—'}</td>
+      <td>${sg.win_reason ?? '—'}</td>
+      <td>${sg.turn_count}</td>
+      <td><a href="/app/replay.html?match=${matchId}&sg=${sg.index}">Replay</a></td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function connectWs() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  const ws = new WebSocket(`${proto}://${location.host}/ws/games/${matchId}`);
+  const el = document.getElementById('ws-status');
+  ws.onopen  = () => { el.textContent = 'WebSocket: connected'; };
+  ws.onclose = () => { el.textContent = 'WebSocket: disconnected'; };
+  ws.onmessage = (e) => {
+    const msg = JSON.parse(e.data);
+    if (msg.event === 'state_update') loadMatch();
+  };
+}
+
+loadMatch();
+connectWs();
+</script>
+</body>
+</html>
