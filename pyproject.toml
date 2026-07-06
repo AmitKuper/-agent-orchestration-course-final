@@ -36,6 +36,9 @@ ignore = ["N999"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 
+[project.scripts]
+server-ctl = "cop_thief.cli.server_ctl:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
