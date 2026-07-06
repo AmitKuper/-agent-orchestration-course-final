@@ -10,6 +10,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from cop_thief.api.routes_admin import router as admin_router
 from cop_thief.api.routes_auth import router as auth_router
 from cop_thief.api.routes_games import router as games_router
 from cop_thief.api.routes_health import router as health_router
@@ -51,6 +52,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router, prefix=API_PREFIX, tags=["health"])
     app.include_router(auth_router, prefix=API_PREFIX, tags=["auth"])
     app.include_router(games_router, prefix=API_PREFIX, tags=["games"])
+    app.include_router(admin_router, prefix=API_PREFIX, tags=["admin"])
     app.include_router(mcp_router, prefix=MCP_PREFIX, tags=["mcp"])
     return app
 

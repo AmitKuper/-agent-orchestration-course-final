@@ -10,6 +10,19 @@ from cop_thief.cli.server_gui import ServerGui
 from cop_thief.webserver.server_manager import ServerEntry, ServerManager
 
 
+def _tk_available() -> bool:
+    """Return True if a Tk root window can be created in this environment."""
+    try:
+        root = tk.Tk()
+        root.destroy()
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+pytestmark = pytest.mark.skipif(not _tk_available(), reason="Tk display not available")
+
+
 @pytest.fixture
 def manager(tmp_path: Path) -> ServerManager:
     """ServerManager backed by a temp state file."""
