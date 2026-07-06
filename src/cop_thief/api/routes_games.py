@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 from cop_thief.actors.heuristic_actor import HeuristicActor
 from cop_thief.api.deps import CurrentUserDep, SessionDep, SettingsDep
+from cop_thief.api.ws_manager import manager as ws_manager
 from cop_thief.constants import DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE
 from cop_thief.db.repositories import MatchRepository, SubGameRepository
 from cop_thief.game.orchestrator import GameOrchestrator
@@ -71,6 +72,7 @@ async def create_human_vs_server(
         server_name=settings.server_name,
         session=session,
     )
+    await ws_manager.broadcast(match.public_id, {"event": "state_update", "observation": obs})
     return {"match_id": match.public_id, "observation": obs}
 
 
@@ -94,6 +96,7 @@ async def submit_human_action(
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)
         ) from exc
+    await ws_manager.broadcast(public_id, {"event": "state_update", "observation": obs})
     return {"observation": obs}
 
 

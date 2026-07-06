@@ -14,7 +14,8 @@ from cop_thief.api.routes_admin import router as admin_router
 from cop_thief.api.routes_auth import router as auth_router
 from cop_thief.api.routes_games import router as games_router
 from cop_thief.api.routes_health import router as health_router
-from cop_thief.constants import API_PREFIX, APP_NAME, MCP_PREFIX
+from cop_thief.api.routes_ws import router as ws_router
+from cop_thief.constants import API_PREFIX, APP_NAME, MCP_PREFIX, WS_PREFIX
 from cop_thief.db.session import init_db
 from cop_thief.mcp.server import router as mcp_router
 from cop_thief.shared.version import VERSION
@@ -54,6 +55,7 @@ def create_app() -> FastAPI:
     app.include_router(games_router, prefix=API_PREFIX, tags=["games"])
     app.include_router(admin_router, prefix=API_PREFIX, tags=["admin"])
     app.include_router(mcp_router, prefix=MCP_PREFIX, tags=["mcp"])
+    app.include_router(ws_router, prefix=WS_PREFIX, tags=["ws"])
     return app
 
 
