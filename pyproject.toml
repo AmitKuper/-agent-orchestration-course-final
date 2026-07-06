@@ -38,6 +38,7 @@ testpaths = ["tests"]
 
 [project.scripts]
 server-ctl = "cop_thief.cli.server_ctl:main"
+server-gui = "cop_thief.cli.server_gui:main"
 
 [build-system]
 requires = ["hatchling"]
